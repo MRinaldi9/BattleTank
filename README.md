@@ -5,3 +5,4 @@ An "open world" fight between tanks with simple UI, AI, Landscaping and control 
 * Setting Up GitHub repo
 * Creation of the Project in Unreal
 * Creation and modeling of the terrain
+* Creation of Material for the terrain and painting
