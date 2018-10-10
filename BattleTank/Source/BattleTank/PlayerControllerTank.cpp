@@ -3,7 +3,12 @@
 #include "PlayerControllerTank.h"
 
 
-
+void APlayerControllerTank::BeginPlay() 
+{
+	Super::BeginPlay();
+	ATank* TankPossessed = GetControlledTank();
+	UE_LOG(LogTemp,Warning,TEXT("%s"),*TankPossessed->GetName())
+}
 
 ATank* APlayerControllerTank::GetControlledTank() const
 {
