@@ -7,12 +7,20 @@ void AAIControllerTank::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ATank* AITankControlled = GetAIControlledTank();
-	UE_LOG(LogTemp,Warning,TEXT("%s"),*(AITankControlled->GetName()))
+	auto AITankControlled = GetAIControlledTank();
+	auto PlayerTankControlled = GetPlayerTank();
+	UE_LOG(LogTemp, Warning, TEXT("I'm aiming at: %s"), *(GetPlayerTank()->GetName()))
 }
 
-ATank* AAIControllerTank::GetAIControlledTank()
+ATank* AAIControllerTank::GetAIControlledTank() const
 {
 	return Cast<ATank>(GetPawn());
+}
+
+ATank* AAIControllerTank::GetPlayerTank() const
+{
+	auto PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!PlayerTank) { return nullptr; }
+	return Cast<ATank>(PlayerTank);
 }
 
