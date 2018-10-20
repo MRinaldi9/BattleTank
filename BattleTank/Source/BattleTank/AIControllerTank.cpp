@@ -12,6 +12,17 @@ void AAIControllerTank::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("I'm aiming at: %s"), *(GetPlayerTank()->GetName()))
 }
 
+void AAIControllerTank::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (GetAIControlledTank())
+	{
+		GetAIControlledTank()->AimAt(GetAIControlledTank()->GetActorLocation());
+
+	}
+}
+
 ATank* AAIControllerTank::GetAIControlledTank() const
 {
 	return Cast<ATank>(GetPawn());
