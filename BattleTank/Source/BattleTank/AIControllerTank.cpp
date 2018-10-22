@@ -18,7 +18,7 @@ void AAIControllerTank::Tick(float DeltaTime)
 
 	if (GetAIControlledTank())
 	{
-		GetAIControlledTank()->AimAt(GetAIControlledTank()->GetActorLocation());
+		GetAIControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
 
 	}
 }
