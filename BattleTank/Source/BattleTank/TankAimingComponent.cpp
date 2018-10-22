@@ -20,7 +20,7 @@ void UTankAimingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -32,9 +32,32 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UTankAimingComponent::AimAt(FVector HitLocation)
+void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%s is aiming at %s from %s"),*GetOwner()->GetName(),*HitLocation.ToString(),*Barrel->GetComponentLocation().ToString())
+	if (!Barrel) { return; }
+	FVector OutSuggestedVelocity;
+	FVector StartLocation = Barrel->GetSocketLocation(FName("EndBarrel"));
+	TArray<AActor*> Actors;
+
+	if (UGameplayStatics::SuggestProjectileVelocity
+	(
+		this,
+		OutSuggestedVelocity,
+		StartLocation,
+		HitLocation,
+		LaunchSpeed,
+		false,
+		0.5f,
+		0,
+		ESuggestProjVelocityTraceOption::DoNotTrace,
+		FCollisionResponseParams::DefaultResponseParam,
+		Actors,
+		true
+	))
+	{
+		auto AimDirection = OutSuggestedVelocity.GetSafeNormal();
+		UE_LOG(LogTemp, Warning, TEXT("Aiming at direction %s"), *AimDirection.ToString())
+	}
 }
 
 void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
