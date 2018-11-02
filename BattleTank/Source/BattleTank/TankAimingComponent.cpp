@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "TankAimingComponent.h"
 #include "TankBarrel.h"
 #include "Kismet/GameplayStatics.h"
-#include "TankAimingComponent.h"
+#include "Engine/World.h"
+
+
 
 
 
@@ -38,29 +41,32 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; }
+
 	FVector OutSuggestedVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("EndBarrel"));
-	TArray<AActor*> Actors;
-
-	if (UGameplayStatics::SuggestProjectileVelocity
-	(
+	//Return true when there is a solution for the method, else when there isn't a solution or the solution is blocked then return false
+	bool bIsValidSolution = UGameplayStatics::SuggestProjectileVelocity(
 		this,
 		OutSuggestedVelocity,
 		StartLocation,
 		HitLocation,
 		LaunchSpeed,
 		false,
-		0.5f,
 		0,
-		ESuggestProjVelocityTraceOption::DoNotTrace,
-		FCollisionResponseParams::DefaultResponseParam,
-		Actors,
-		true
-	))
+		0,
+		ESuggestProjVelocityTraceOption::DoNotTrace);
+
+	if (bIsValidSolution)
 	{
 		auto AimDirection = OutSuggestedVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
-		
+		auto Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: AimComponent found"), Time);
+	}
+	else
+	{
+		auto Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: AimComponent not found"), Time);
 	}
 }
 
@@ -70,9 +76,8 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 	FRotator AimAsRotator = AimDirection.Rotation();
 	//Difference from actual position and rotation of the barrel
 	auto DeltaRotator = AimAsRotator - BarrelDirection;
-	UE_LOG(LogTemp, Warning, TEXT("Tank is: %s AimAsRotator is %s"), *DeltaRotator.ToString())
 
-	Barrel->Elevetion(5);
+	Barrel->Elevation(DeltaRotator.Pitch);
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)

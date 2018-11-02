@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "AIControllerTank.h"
 #include "Tank.h"
 #include "Engine/World.h"
-#include "AIControllerTank.h"
+
 
 
 
@@ -10,9 +11,6 @@ void AAIControllerTank::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto AITankControlled = GetAIControlledTank();
-	auto PlayerTankControlled = GetPlayerTank();
-	UE_LOG(LogTemp, Warning, TEXT("I'm aiming at: %s"), *(GetPlayerTank()->GetName()))
 }
 
 void AAIControllerTank::Tick(float DeltaTime)
