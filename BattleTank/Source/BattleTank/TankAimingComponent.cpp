@@ -2,6 +2,7 @@
 
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
@@ -40,8 +41,10 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
-	if (!Barrel) { return; }
+	if (!Barrel && !Turret) { return; }
 
+
+	FVector AimDirection;
 	FVector OutSuggestedVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("EndBarrel"));
 	//Return true when there is a solution for the method, else when there isn't a solution or the solution is blocked then return false
@@ -56,17 +59,18 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace);
 
+	AimDirection = OutSuggestedVelocity.GetSafeNormal();
+
 	if (bIsValidSolution)
 	{
-		auto AimDirection = OutSuggestedVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
+		MoveTurret(AimDirection);
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: AimComponent found"), Time);
 	}
 	else
 	{
-		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: AimComponent not found"), Time);
+		MoveTurret(AimDirection);
+		UE_LOG(LogTemp, Warning, TEXT("MoveTurretCalled"));
 	}
 }
 
@@ -80,8 +84,22 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 	Barrel->Elevation(DeltaRotator.Pitch);
 }
 
+void UTankAimingComponent::MoveTurret(FVector AimDirection)
+{
+	auto TurretDirection = Turret->GetForwardVector().Rotation();
+	FRotator AimAsRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - TurretDirection;
+
+	Turret->RotationTurret(DeltaRotator.Yaw);
+}
+
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
+}
+
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
 }
 
