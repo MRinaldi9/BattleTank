@@ -43,8 +43,6 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel && !Turret) { return; }
 
-
-	FVector AimDirection;
 	FVector OutSuggestedVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("EndBarrel"));
 	//Return true when there is a solution for the method, else when there isn't a solution or the solution is blocked then return false
@@ -59,39 +57,25 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace);
 
-	AimDirection = OutSuggestedVelocity.GetSafeNormal();
 
 	if (bIsValidSolution)
 	{
-		MoveBarrel(AimDirection);
-		MoveTurret(AimDirection);
-		auto Time = GetWorld()->GetTimeSeconds();
-	}
-	else
-	{
-		MoveTurret(AimDirection);
-		UE_LOG(LogTemp, Warning, TEXT("MoveTurretCalled"));
+		FVector AimDirection = OutSuggestedVelocity.GetSafeNormal();
+		MovementsInputTank(AimDirection);
 	}
 }
 
-void UTankAimingComponent::MoveBarrel(FVector AimDirection)
+void UTankAimingComponent::MovementsInputTank(FVector AimDirection)
 {
 	auto BarrelDirection = Barrel->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
-	//Difference from actual position and rotation of the barrel
+	//Difference from actual position of the Aim and rotation of the barrel
 	auto DeltaRotator = AimAsRotator - BarrelDirection;
 
 	Barrel->Elevation(DeltaRotator.Pitch);
-}
-
-void UTankAimingComponent::MoveTurret(FVector AimDirection)
-{
-	auto TurretDirection = Turret->GetForwardVector().Rotation();
-	FRotator AimAsRotator = AimDirection.Rotation();
-	auto DeltaRotator = AimAsRotator - TurretDirection;
-
 	Turret->RotationTurret(DeltaRotator.Yaw);
 }
+
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
