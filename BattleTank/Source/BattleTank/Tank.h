@@ -52,5 +52,9 @@ public:
 	
 private:
 	UTankBarrel* LocalBarrel = nullptr;
+
+	UPROPERTY(EditAnywhere,Category = Setup)
+	float ReloadShooting = 4;
+	float LastTimeReload = 0;
 	
 };
