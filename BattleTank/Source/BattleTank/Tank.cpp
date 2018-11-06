@@ -50,5 +50,10 @@ void ATank::SetTurretReference(UTankTurret * TurretToSet)
 
 void ATank::Fire()
 {
-	GetWorld()->SpawnActor<ATankProjectile>(ProjectileBlueprint, LocalBarrel->GetSocketLocation(FName("EndBarrel")), LocalBarrel->GetSocketRotation(FName("EndBarrel")));
+	auto ProjectileInstance = GetWorld()->SpawnActor<ATankProjectile>(
+		ProjectileBlueprint, 
+		LocalBarrel->GetSocketLocation(FName("EndBarrel")), 
+		LocalBarrel->GetSocketRotation(FName("EndBarrel")));
+
+	ProjectileInstance->LaunchProjectile(LaunchSpeed);
 }
