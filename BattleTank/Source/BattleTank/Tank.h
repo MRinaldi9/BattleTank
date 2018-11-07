@@ -31,7 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = GamePlay)
 	void Fire();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly,Category = Setup)
 	float LaunchSpeed = 4000.f; //TODO Find a right value
 
 
@@ -41,7 +41,7 @@ protected:
 	virtual void BeginPlay() override;
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<ATankProjectile> ProjectileBlueprint = nullptr;
 
 
@@ -53,8 +53,9 @@ public:
 private:
 	UTankBarrel* LocalBarrel = nullptr;
 
-	UPROPERTY(EditAnywhere,Category = Setup)
+	UPROPERTY(EditDefaultsOnly,Category = Setup)
 	float ReloadShooting = 4;
+
 	float LastTimeReload = 0;
 	
 };
