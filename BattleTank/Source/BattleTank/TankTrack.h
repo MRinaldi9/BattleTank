@@ -19,7 +19,7 @@ public:
 	UFUNCTION(BlueprintCallable,Category = Setup)
 	void SetThrottle(float Throttle);
 
-	//Max force per track, in Newtons
+	//Max force per track, in Newtons (Units in Unreal are in cm so we need 100 more for meters)
 	UPROPERTY(EditDefaultsOnly)
 	float TrackMaxDrivingForce = 400000;
 	
